@@ -1,6 +1,7 @@
 package com.example.mks.firebaserealtimedatabase;
 
 import android.content.Intent;
+import android.provider.ContactsContract;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -115,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
        // final TextView textViewName=(TextView)dialogView.findViewById(R.id.tvName);
         final Button buttonUpdate=(Button)dialogView.findViewById(R.id.buttonUpdateArtist);
         final Spinner spinner=(Spinner)dialogView.findViewById(R.id.spinnerGenress);
+        final Button buttonDelete=(Button)dialogView.findViewById(R.id.buttonDeleteArtist);
         builder.setTitle("Update Artist"+artistName);
         final AlertDialog alertDialog=builder.create();
         alertDialog.show();
@@ -133,12 +135,28 @@ public class MainActivity extends AppCompatActivity {
 
            }
        });
+        buttonDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                deleteArtist(artistId);alertDialog.dismiss();
+            }
+
+        });    }
 
 
-
-
-
+    private void deleteArtist(String artistId){
+        DatabaseReference databaseReferenceArtist=FirebaseDatabase.getInstance().getReference("artists").child(artistId);
+        DatabaseReference databaseReferenceTracks=FirebaseDatabase.getInstance().getReference("tracks").child(artistId);
+        databaseReferenceArtist.removeValue();
+        databaseReferenceTracks.removeValue();
+        Toast.makeText(this,"Artist is deleted",Toast.LENGTH_LONG).show();
     }
+
+
+
+
+
+
     private boolean updateArtist(String id,String name,String genre){
         DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("artists").child(id);
         Artist artist= new Artist(id,name,genre);
